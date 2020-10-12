@@ -1,0 +1,67 @@
+#lang racket
+(provide (struct-out complex) parse eval)
+
+(struct const (val)    #:transparent)
+(struct binop (op l r) #:transparent)
+(struct complex (re im) #:transparent)
+(struct i () #:transparent)
+
+(define value?
+  complex?)
+
+;Procedura complex-op pozwala wykonywać obliczenia na
+;liczbach zespolonych. Przyjmuje jako argument operator
+;oraz dwie structury complex.
+;Korzystam z wzorów i własności opisanych na stronie:
+;https://byjus.com/complex-number-formula/
+(define (complex-op op c1 c2)
+  (let ([c1-re (complex-re c1)]
+        [c1-im (complex-im c1)]
+        [c2-re (complex-re c2)]
+        [c2-im (complex-im c2)])
+    (cond [(or (eq? op +) (eq? op -))
+           (complex (op c1-re c2-re)
+                    (op c1-im c2-im))]
+          [(eq? op *)
+           (complex (- (op c1-re c2-re)
+                        (op c1-im c2-im))
+                     (+ (op c1-re c2-im)
+                        (op c2-re c1-im)))]
+          [(eq? op /)
+           (complex (/ (+ (* c1-re c2-re)
+                          (* c1-im c2-im))
+                       (+ (* c2-re c2-re)
+                          (* c2-im c2-im)))
+                    (/ (- (* c1-im c2-re)
+                          (* c1-re c2-im))
+                       (+ (* c2-re c2-re)
+                          (* c2-im c2-im))))])))
+        
+
+(define (op->proc op)
+  (match op ['+ +] ['- -] ['* *] ['/ /]))
+
+(define (eval e)
+  (match e
+    [(i) (complex 0 1)]
+    [(const n) (complex n 0)]
+    [(binop op l r) (complex-op (op->proc op) (eval l) (eval r))]))
+
+
+
+(define (parse q)
+  (cond [(number? q) (const q)]
+        [(eq? q 'i) (i)]
+        [(and (list? q) (eq? (length q) 3) (symbol? (first q)))
+         (binop (first q) (parse (second q)) (parse (third q)))]))
+
+;Testy:
+
+(eval (parse '(/ (+ 1 (* 8 i)) (+ 2 (* 3 i)))))
+(eval (parse '(* (+ 5 (* 2 i)) (- 3 (* 7 i)))))
+(eval (parse '(/ (* (* (* i i) (* i i)) (* (* i i) (* i i))) (* i i))))
+(eval (parse '(+ i i)))
+(eval (parse '(* i i)))
+(eval (parse '(/ 5 2)))
+
+(value? (complex 1 0))

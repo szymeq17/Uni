@@ -1,0 +1,45 @@
+(define (clause? x)
+  (and (list? x)
+       (andmap  literal? x)))
+
+(define (cnf? x)
+  (and (list? x)
+       (andmap  clause? x)))
+
+(define (convert-to-cnf f)
+  
+  (define (small el l2)
+    (define (smalltmp el l2 score)
+      (if (null? l2)
+          score
+          (smalltmp el (cdr l2) (list score (list el (car l2))))))
+    (smalltmp el (cdr l2) (list el (car l2))))
+    
+  (define (big l1 l2 score)
+    (if (null? l1)
+        score
+        (big (cdr l1) l2 (append score (small (car l1) l2)))))
+    
+  (define (convert-helper f)
+    (cond
+      [(literal? f) (list f)]
+      [(conj? f) (append (convert-helper (conj-left f)) (convert-helper (conj-rght f)))]
+      [(disj? f) (append (big (convert-helper (conj-left f)) (convert-helper (conj-rght f)) (list)))]
+      ))
+  (list (convert-helper f )))
+
+  
+"testy"
+
+(define x (convert-to-nnf (make-disj (make-disj 'p 'q) (make-disj 'x 'y))))
+(define y (convert-to-nnf (make-conj (make-conj 'p 'q) (make-conj 'x 'y))))
+(define k (convert-to-nnf (make-conj (make-disj 'p 'q) (make-disj 'x 'y))))
+(define l (convert-to-nnf (make-disj (make-conj 'p 'q) (make-conj 'x 'y))))
+(define z (convert-to-nnf 'p))
+(convert-to-cnf x)
+(clause? (convert-to-cnf x))
+(cnf? (convert-to-cnf x))
+(cnf? (convert-to-cnf y))
+(cnf? (convert-to-cnf z))
+(cnf? (convert-to-cnf k))
+(cnf? (convert-to-cnf l))

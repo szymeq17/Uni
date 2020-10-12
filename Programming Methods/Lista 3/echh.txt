@@ -1,0 +1,73 @@
+#lang racket
+
+(define (append as bs)
+  (if (null? as)
+      bs
+      (cons (car as)
+            (append (cdr as) bs))))
+
+(define (map f xs)
+  (if (null? xs)
+      null
+      (cons (f (car xs))
+            (map f (cdr xs)))))
+
+Teza: (map f(append xs ys)) ?= (append (map f xs) (map f ys))
+
+Dowód indukcyjny wzgledem xs:
+
+
+oznaczmy L=(map f(append xs ys))=(z def append)
+= (map f
+       (if (null? xs)
+      ys
+      (cons (car xs)
+            (append (cdr xs) ys))))
+
+
+R = (append (map f xs) (map f ys))= z def map
+= (append
+  (if (null? xs)
+      null
+      (cons (f (car xs))
+            (map f (cdr xs))))
+  (map f ys))
+
+podstawa indukcji - (null? xs)
+Widzimy że z definicji append i map jesli xs jest nullem to
+L = (map f(append xs ys)) = (z def append)
+= (map f
+       (if #t
+      ys
+      (cons (car xs)
+            (append (cdr xs) ys))))
+= (map f ys)
+
+za to prawa strona:
+
+R= (append (map f xs) (map f ys))= z def map
+=(append
+  (if #t
+      null
+      (cons (f (car xs))
+            (map f (cdr xs))))
+  (map f ys))
+=(append null (map f ys))      teraz z definicji append (analogicznie jak po lewej stronie ):
+= (map f ys)
+
+
+Czyli widzimy że dla null L=R
+
+
+Teraz w kroku indukcyjnym załóżmy że dla dowolnych x xs zachodzi:
+
+(map f(append xs ys)) = (append (map f xs) (map f ys))
+
+pokażemy ze zachodzi:
+
+(map f(append (cons x xs) ys)) = (append (map f (cons x  xs)) (map f ys))
+
+
+
+
+

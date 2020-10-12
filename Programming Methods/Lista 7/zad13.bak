@@ -1,0 +1,79 @@
+
+#lang racket
+
+; --------- ;
+; Wyrazenia ;
+; --------- ;
+
+(struct const    (val)      #:transparent)
+(struct binop    (op l r)   #:transparent)
+(struct var-expr (id)       #:transparent)
+(struct var-dead (id)       #:transparent)
+(struct let-expr (id e1 e2) #:transparent)
+
+(define (expr? e)
+  (match e
+    [(const n) (number? n)]
+    [(binop op l r) (and (symbol? op) (expr? l) (expr? r))]
+    [(var-expr x) (symbol? x)]
+    [(var-dead x) (symbol? x)]
+    [(let-expr x e1 e2) (and (symbol? x) (expr? e1) (expr? e2))]
+    [_ false]))
+
+(define (parse q)
+  (cond
+    [(number? q) (const q)]
+    [(symbol? q) (var-expr q)]
+    [(and (list? q) (eq? (length q) 3) (eq? (first q) 'let))
+     (let-expr (first (second q))
+               (parse (second (second q)))
+               (parse (third q)))]
+    [(and (list? q) (eq? (length q) 3) (symbol? (first q)))
+     (binop (first q)
+            (parse (second q))
+            (parse (third q)))]))
+
+(struct environ (xs))
+(define env-empty (environ null))
+(define (env-add x loc env)
+  (environ (cons (cons x loc) (environ-xs env))))
+(define (env-lookup x env)
+  (define (assoc-lookup xs)
+    (cond [(null? xs) #f]
+          [(eq? x (car (car xs))) (cdr (car xs))]
+          [else (assoc-lookup (cdr xs))]))
+  (assoc-lookup (environ-xs env)))
+; ---------------------------------- ;
+; Wyszukaj ostatnie uzycie zmiennych ;
+; ---------------------------------- ;
+
+(define (bound-vars e vars)
+    (match e
+        [(const n) vars]
+        [(binop op l r) 
+         (let ([left (bound-vars l vars)]
+                [right (bound-vars r vars)])
+            (append left right))]
+        [(let-expr id e1 e2)
+         (let ([e1-vars (bound-vars e1 vars)]
+               [e2-vars (bound-vars e2 (append (list id) vars))])
+           (append e1-vars e2-vars))]
+       [(var-expr id) vars]))
+       
+(define (free-vars e vars bound)
+    (match e
+        [(const n) vars]
+        [(binop op l r)
+            (let ([left (free-vars l vars bound)]
+                  [right (free-vars r vars bound)])
+            (append left right))]
+        [(let-expr id e1 e2)
+            (let ([e1-vars (free-vars e1 vars bound)]
+                  [e2-vars (free-vars e2 vars bound)])
+                  (append e1-vars e2-vars))]
+       [(var-expr id)
+        (if (eq? (member id bound) #f)
+            (append vars (list id))
+            vars)]))
+
+(bound-vars (parse '(let 

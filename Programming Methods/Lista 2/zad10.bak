@@ -1,0 +1,43 @@
+#lang racket
+
+(provide cnt-fract)
+
+(define (dist a b)
+  (abs (- a b)))
+
+(define (good-enough? a b)
+  (< (dist a b) 0.000001))
+
+(define (cnt-fract num den)
+  (define (cnt-k-fract a a-next b b-next k)
+    (define (formula curr prev)
+    (+ (* (den k)
+          curr)
+       (* (num k)
+          prev)))
+    (if (good-enough? (/ a b)
+                      (/ a-next b-next))
+        (/ a b)
+        (cnt-k-fract a-next
+                     (formula a-next a)
+                     b-next
+                     (formula b-next b)
+                     (+ k 1))))
+  (cnt-k-fract 1.0 0.0 0.0 1.0 1))
+       
+
+(define (atan-cf x)
+  (define (odd k)
+    (- (* 2 k) 1))
+  (define (num k)
+    (if (= k 1)
+        x
+        ((lambda (x) (* x x)) (* x (- k 1)))))
+  (cnt-fract num odd))
+
+;TESTY:
+(atan-cf 10)
+(atan 10)
+(atan-cf 1)
+(atan 1)
+(cnt-fract (lambda(i) 1.0) (lambda(i) 1.0)) ; 1/phi

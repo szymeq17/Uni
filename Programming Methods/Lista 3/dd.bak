@@ -1,0 +1,13 @@
+#lang racket
+
+(define (append as bs)
+  (if (null? as)
+      bs
+      (cons (car as)
+            (append (cdr as) bs))))
+
+(define (map f xs)
+  (if (null? xs)
+      null
+      (cons (f (car xs))
+            (map f (cdr xs)))))

@@ -1,0 +1,319 @@
+
+; MP lista 5
+; KOD KTÓRY POWSTAŁ W RAMACH ĆWICZEŃ 
+#lang racket
+(define (var? t)
+  (symbol? t))
+
+(define (neg? t)
+  (and (list? t)
+       (= 2 (length t))
+       (eq? 'neg (car t))))
+
+(define (conj? t)
+  (and (list? t)
+       (= 3 (length t))
+       (eq? 'conj (car t))))
+
+(define (disj? t)
+  (and (list? t)
+       (= 3 (length t))
+       (eq? 'disj (car t))))
+
+(define (make-neg f)
+  (list 'neg f))
+    
+(define (make-conj l r)
+  (list 'conj l r))
+    
+(define (make-disj l r)
+  (list 'disj l r))
+    
+(define (neg-subf f)
+  (second f))
+
+(define (conj-left f)
+  (second f))
+    
+(define (conj-rght f)
+  (third f))
+    
+(define (disj-left f)
+  (second f))
+    
+(define (disj-rght f)
+  (third f))
+    
+(define tauthology (make-disj 'p (make-neg 'p)))
+(define some-formula (make-conj 'p 'q))
+
+(define (prop? f)
+  (or (var? f)
+      (and (neg? f)
+           (prop? (neg-subf f)))
+      (and (disj? f)
+           (prop? (disj-left f))
+           (prop? (disj-rght f)))
+      (and (conj? f)
+           (prop? (conj-left f))
+           (prop? (conj-rght f)))))
+
+(define (free-vars f)
+  (define (go f)
+    (cond ((var? f)
+           (list f))
+          ((neg? f)
+           (go (neg-subf f)))
+          ((disj? f)
+           (append (go (disj-left f)) 
+                   (go (disj-rght f))))
+          ((conj? f)
+           (append (go (conj-left f)) 
+                   (go (conj-rght f))))))
+  (remove-duplicates (go f)))
+
+
+(define (gen-vals xs)
+  (if (null? xs)
+      (list null)
+      (let*
+          ((vss  (gen-vals (cdr xs)))
+           (x    (car xs))
+           (vst  (map (lambda (vs) (cons (list x true)  vs)) vss))
+           (vsf  (map (lambda (vs) (cons (list x false) vs)) vss)))
+        (append vst vsf))))
+
+(define (eval-formula f v)
+  (cond
+    ((var? f) (second (assoc f v)))
+    ((neg? f) (not (eval-formula (neg-subf f) v)))
+    ((conj? f) (and
+                (eval-formula (conj-left f) v)
+                (eval-formula (conj-rght f) v)))
+    ((disj? f) (or
+                (eval-formula (disj-left f) v)
+                (eval-formula (disj-rght f) v)))
+    ))
+
+; (define second cadr)
+; (define (cadr x) (car (cdr x)))
+; (define head car)
+; (define tail cdr)
+
+(define (falsifiable-eval? f)
+  (define (is-false v)
+    (not (eval-formula f v)))
+  (let* [
+         (vars (free-vars f))
+         (all-vals (gen-vals vars))
+         (false-vals (filter is-false all-vals))
+         ]
+    (if (= (length false-vals) 0)
+        false
+        (first false-vals))))
+
+;; (make-literal false 'p) - zanegowane p, wpp niezanegowane
+(define (make-literal b p)
+  (list 'literal b p))
+
+(define (literal? f)
+  (and (= 3 (length f))
+       (eq? 'literal (first f))
+       (boolean? (second f))
+       (var? (third f))))
+
+(define (literal-positive? f)
+  (second f))
+
+(define (literal-var f) 
+  (third f))
+
+(define (nnf? f)
+  (or (var? f)  
+      (literal? f)
+      (and (disj? f)
+           (nnf? (disj-left f))
+           (nnf? (disj-rght f)))
+      (and (conj? f)
+           (nnf? (conj-left f))
+           (nnf? (conj-rght f)))))
+
+(define (free-vars-nnf f) 
+  (define (go f)
+    (cond ((var? f)
+           (list f))
+          ((literal? f) 
+           (list (literal-var f))) 
+          ((neg? f)
+           (go (neg-subf f)))
+          ((disj? f)
+           (append (go (disj-left f)) 
+                   (go (disj-rght f))))
+          ((conj? f)
+           (append (go (conj-left f)) 
+                   (go (conj-rght f))))))
+  (remove-duplicates (go f)))
+    
+(define (eval-formula-nnf f v)
+  (cond
+    ((var? f) (second (assoc f v)))
+    ((literal? f)
+     (let ((var-val (second (assoc (literal-var f)) v)))
+       (if (literal-positive? f)
+           var-val
+           (not var-val)))) 
+    ((neg? f) (not (eval-formula-nnf (neg-subf f) v)))
+    ((conj? f) (and
+                (eval-formula-nnf (conj-left f) v)
+                (eval-formula-nnf (conj-rght f) v)))
+    ((disj? f) (or
+                (eval-formula-nnf (disj-left f) v)
+                (eval-formula-nnf (disj-rght f) v)))
+    ))
+    
+
+(define (convert-to-nnf f)
+  (define (T f)
+    (cond
+      [(var? f) (make-literal true f)]
+      [(neg? f) (F (neg-subf f))] 
+      [(conj? f) (make-conj
+                  (T (conj-left f))
+                  (T (conj-rght f)))]
+      [(disj? f) (make-disj
+                  (T (disj-left f))
+                  (T (disj-rght f)))]
+      )
+    )
+  (define (F f)
+    (cond
+      [(var? f) (make-literal false f)]
+      [(neg? f) (T (neg-subf f))] 
+      [(conj? f) (make-disj
+                  (F (conj-left f))
+                  (F (conj-rght f)))]
+      [(disj? f) (make-conj
+                  (F (disj-left f))
+                  (F (disj-rght f)))]
+      )
+    )
+  (T f)
+  )
+
+; ĆWICZENIE 8 - KOD WŁASNY
+
+(define (clause? x)
+  (and (list? x)
+       (andmap  literal? x)))
+
+(define (cnf? x)
+  (and (list? x)
+       (andmap  clause? x)))
+
+(define (convert-to-cnf f)
+  
+  (define (small el l2) ;el to klauzula, l2 to lista klauzul
+    (define (smalltmp el l2 score)
+      (if (null? l2)
+          score
+          (smalltmp el (cdr l2) (append score
+                                        (list (append el (car l2)))))
+          ))
+    (smalltmp el l2 (list)))
+
+  (define (big l1 l2)
+    (define (bigtmp l1 l2 score)
+      (if (null? l1)
+          score
+          (bigtmp (cdr l1) l2 (append score (small (car l1) l2)))))
+    (bigtmp l1 l2 (list)))
+    
+  (define (convert-helper f)
+    (cond
+      [(literal? f) (list (list f))]
+      [(conj? f) (append (convert-helper (conj-left f)) (convert-helper (conj-rght f)))]
+      [(disj? f) (big (convert-helper (disj-left f)) (convert-helper (disj-rght f))) ]
+      ))
+  (convert-helper f ))
+
+
+#|(define x (convert-to-nnf (make-disj (make-disj 'p 'q) (make-disj 'x 'y))))
+(define y (convert-to-nnf (make-conj (make-conj 'p 'q) (make-conj 'x 'y))))
+(define k (convert-to-nnf (make-conj (make-disj 'p 'q) (make-disj 'x 'y))))
+(define l (convert-to-nnf (make-disj (make-conj 'p 'q) (make-conj 'x 'y))))
+(define z (convert-to-nnf 'p))
+
+
+
+"testy"
+(cnf? (convert-to-cnf x))
+(cnf? (convert-to-cnf y))
+(cnf? (convert-to-cnf k))
+(cnf? (convert-to-cnf l))
+(cnf? (convert-to-cnf z))
+
+(define x1 (convert-to-cnf z))
+(define x2 (convert-to-cnf x))
+(define x3 (convert-to-cnf k))
+(define x4 (convert-to-cnf l)) |#
+;DOMOWE ZACZYNA SIĘ TUTAJ
+
+(define (convert-to-formula cnf) ; pomocnicza 1 zmienia klauzule na formule
+  (if (= (length cnf) 1)
+      (if (eq? #t (second (car cnf)))
+          (third (car cnf))
+          (make-neg (third (car cnf))))
+      (if (eq? #t (second (car cnf)))
+          (make-disj (third (car cnf)) (convert-to-formula (cdr cnf)))
+          (make-disj (make-neg (third (car cnf))) (convert-to-formula (cdr cnf))))))
+
+;(falsifiable-eval? (convert-to-formula (car x1)))
+
+
+(define (find-eval-vars score l) ; szuka zmiennych w wyniku wartosciowania
+  (if (null? score)
+      l
+      (find-eval-vars (cdr score) (append l (list (caar score))))))
+
+(define (find-not-eval-vars cnf-vars k all-vars) ; znajduje vars ktorych nie policzylismy
+  (if (null? all-vars)
+      k
+      (if (eq? #f (member (car all-vars) cnf-vars))
+          (find-not-eval-vars cnf-vars (append k (list (car all-vars))) (cdr all-vars))
+          (find-not-eval-vars cnf-vars k (cdr all-vars))
+          )))
+(define (eval-not-evaled-vars vars acum)
+  (if (null? vars)
+      acum
+      (eval-not-evaled-vars (cdr vars) (append acum (list (list (car vars) #t))))))
+
+(define (falsifiable-cnf? f)
+  (define vars (free-vars f)) ; wszystie zmienne
+  (define (find-falsifiable-cnf f) ; glowna
+    (define (falsifiable-cnf-helper cnf-formula)  
+      (if (empty? cnf-formula)
+          #f
+          (if (eq? #f (falsifiable-eval? (convert-to-formula (car cnf-formula))))
+              (falsifiable-cnf-helper (cdr cnf-formula))
+              (falsifiable-eval? (convert-to-formula (car cnf-formula))))
+          ))
+    (let* (
+           (nnf-formula (convert-to-nnf f))
+           (cnf-formula (convert-to-cnf nnf-formula)))
+      (falsifiable-cnf-helper cnf-formula)))
+  (define score (find-falsifiable-cnf f)) ; wartosciowania które zeruja jako pierwsze
+  (if (eq? #f score)
+      #f
+      (let*(
+            (eval-vars (find-eval-vars score (list)))
+            (not-eval-vars (find-not-eval-vars eval-vars (list) vars))
+            (missed-vars (eval-not-evaled-vars not-eval-vars (list)))
+            )
+        (append score  missed-vars)
+        ))) 
+
+(falsifiable-cnf? (make-disj (make-conj 'p 'z) (make-disj 'r 'q)))
+(falsifiable-cnf? (make-conj (make-conj (make-conj 'p 'z) (make-disj 'r 'q)) (make-disj 'p 'q)))
+(falsifiable-cnf? (make-disj (make-disj 'p (make-neg 'p)) 'z))
+(falsifiable-cnf? 'p)
+(falsifiable-cnf? (make-disj (make-conj 'p 'q) (make-conj (make-neg 'p) 'q)))
