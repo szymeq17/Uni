@@ -1,0 +1,30 @@
+#div1 {
+  border: 5px solid green;
+  height:200px;
+  width:500px;
+  padding:5px;
+}
+#div2 {
+  border: 5px solid orange;
+  height:120px;
+  width:400px;
+  margin: auto;
+}
+#div3 {
+  border: 5px solid red;
+  height:120px;
+  width:600px;
+  margin: 5px;
+  text-align: center;
+}
+#div4 {
+  border: 5px solid red;
+  height:120px;
+  width:600px;
+  margin: 5px;
+}
+h1 {
+  text-align: center;
+  margin:auto;
+  color: cyan;
+}
