@@ -1,4 +1,3 @@
-import java.sql.SQLOutput;
 
 public class Main {
 
@@ -26,17 +25,13 @@ public class Main {
 //            System.out.println("Dla i = "+i+" "+ 12120 * ((x - Math.sin(x))/Math.pow(x, 3)));
 //        }
         // Zadanie 3
-//        double[] y = new double[51];
-//        y[0] = 1;
-//        y[1] = -1 / 7.0;
-//        for (int i = 2; i <= 50; i++) {
-//            y[i] = 1 / 7.0 * (69 * y[i - 1] + 10 * y[i - 2]);
-//            System.out.println("y" + i + " = " + y[i]);
-//        }
-
-        // Wynik = 0
-        // Wynik nie jest wiarygodny, ponieważ w mianowniku na pewno będzie
-        // liczba większa od 0, więc nie jest możliwe żeby wynikiem było 0
+        double[] y = new double[51];
+        y[0] = 1;
+        y[1] = -1 / 7.0;
+        for (int i = 2; i <= 50; i++) {
+            y[i] = 1 / 7.0 * (69 * y[i - 1] + 10 * y[i - 2]);
+            System.out.println("y" + i + " = " + y[i]);
+        }
 
         // Zadanie 4
 //        double[] res = new double[21];
@@ -50,11 +45,12 @@ public class Main {
 
         // Zadanie 5
 //        double pi = 0;
-//        for (int k = 0; k <= 200000; k++) {
+//        for (int k = 0; k <= 20001  ; k++) {
 //            pi += Math.pow(-1, k) / (2 * k + 1);
 //        }
 //        pi = 4 * pi;
 //        System.out.println(pi);
+//        System.out.println("PI = "+Math.PI);
 
 
     }
