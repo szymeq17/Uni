@@ -25,6 +25,8 @@
 }
 h1 {
   text-align: center;
-  margin:auto;
   color: cyan;
+}
+body {
+  text-align: center;
 }
