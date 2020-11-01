@@ -1,0 +1,25 @@
+table, th, td {
+  border: 2px solid black;
+}
+
+table {
+  width: 80%;
+  margin:auto;
+}
+
+#random {
+  width: 80%;
+  margin: auto;
+}
+
+#gen-btn {
+  width: 100px;
+  height: 60px;
+  margin-top:10px;
+  border-radius: 10px;
+  background-color: #78EAE2
+}
+
+#result {
+  display: inline-block;
+}
