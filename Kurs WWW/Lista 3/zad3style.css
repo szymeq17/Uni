@@ -1,0 +1,40 @@
+.square {
+  width:100px;
+  height:100px;
+  background-color: red;
+  border-radius: 10px;
+  position:absolute;
+  transition: top 0.5s;
+}
+#container {
+  display: inline-block;
+  position: relative;
+  margin:auto;
+  height: 600px;
+}
+
+#square1 {
+  left:500px;
+  top: 300px;
+  background-color: #14C0DE;
+}
+#square2 {
+  left:650px;
+  top: 300px;
+  background-color: #F48ADA;
+}
+#square3 {
+  left:800px;
+  top: 300px;
+  background-color: #B7FB8A;
+}
+#square4 {
+  left:950px;
+  top: 300px;
+  background-color: #9966FF;
+}
+#square5 {
+  left:1100px;
+  top: 300px;
+  background-color: #F1542D;
+}
