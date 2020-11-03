@@ -15,6 +15,7 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+$(document).ready(function() {
 for(i=0; i<adverbs.length; i++) {
   $("#words").append("<tr><td>" + adverbs[i] + "</td><td>" + verbs[i] +
   "</td><td>" + adjectives[i] + "</td><td>" + nouns[i] + "</td></tr>");
@@ -30,4 +31,5 @@ $("#gen-btn").click(function() {
   let first = word.charAt(0).toUpperCase();
   word = first + word.substring(1);
   $("#result").html(word)
+})
 })

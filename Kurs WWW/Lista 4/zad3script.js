@@ -22,7 +22,7 @@ function unselectAll() {
     $("img").data("marked", false);
     $(this).css("border-color", "black");
   })
-  showMarked();
+  $("#log").text("Zaznaczone: ")
 }
 
 $(document).ready(function() {

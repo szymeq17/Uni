@@ -1,4 +1,5 @@
-$("#input").keyup(() => {
+$(document).ready(function () {
+  $("#input").keyup(() => {
   let match = $("#input").val();
   $("#items").removeClass("gray");
   $( "li" ).each(function() {
@@ -15,3 +16,4 @@ $("#input").keyup(() => {
 });
     }
 });
+})
