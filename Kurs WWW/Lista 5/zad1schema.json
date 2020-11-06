@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Form",
+  "type": "object",
+  "properties": {
+    "accNumber": {
+      "type": "string",
+      "description": "The person's bank account number.",
+      "pattern": "[0-9]{26}"
+    },
+    "pesel": {
+      "type": "string",
+      "description": "The person's PESEL.",
+      "pattern": "[0-9]{11}"
+    },
+    "birthDate": {
+      "description": "Date of birth (DD-MM-YYYY)",
+      "type": "string",
+      "pattern": "(0[1-9]|[1-2]\\d|31)-(0\\d|1[0-2])-(19\\d{2}|20[0-1]\\d|2020)"
+    },
+    "email": {
+      "description": "The person's e-mail",
+      "type": "string",
+      "pattern": "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}"
+    }
+  }
+}
