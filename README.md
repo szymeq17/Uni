@@ -5,7 +5,7 @@ University: **Institute of Computer Science (University of Wrocław)**
 
 I do not recommend to copy my solutions. They are here just for educatacional purposes.
 
-**SOME SOLUTIONS MAY BE INCORRENT!**
+**SOME SOLUTIONS MAY BE INCORRECT!**
 
 ## Courses
 
