@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script type='text/javascript'>
+    function GetMap() {
+        var map = new Microsoft.Maps.Map('#myMap', {
+            credentials: 'Ar8OuXle5we71Wi0SX1Iwfw_BNitDyPH-P0-X55td977BSN9LoK709gyH3yzkOg7',
+        });
+
+        var pushpins = [];
+        var infoboxes = [];
+        counter = 0;
+
+        function makeTitle() {
+            return "pushpin".concat((counter).toString());
+        }
+        function makeText() {
+            return (counter).toString();
+        }
+
+        Microsoft.Maps.Events.addHandler(map, 'dblclick', function (e) { 
+            var point = new Microsoft.Maps.Point(e.getX(), e.getY());
+            var loc = e.target.tryPixelToLocation(point);
+            var location = new Microsoft.Maps.Location(loc.latitude, loc.longitude);
+            title = makeTitle();
+            text = makeText();
+            var pin = new Microsoft.Maps.Pushpin(location, {
+                title: title,
+                subTitle: '',
+                color: 'red',
+                text: text
+            });
+
+            var infobox = new Microsoft.Maps.Infobox(location, {
+                title: "To tutaj",
+                visible: false
+            });
+
+            map.entities.push(pin);
+            infobox.setMap(map);
+            pushpins.push(pin);
+            infoboxes.push(infobox);
+            counter++;
+            $("#pushpins-list").append("<li class='pin' id='p" + text +"'>" + "[" + text + "] " + location.latitude + ", " + location.longitude + "</li>");
+            
+            var $selected = null;
+            var $previous = null;
+
+     
+            $(".pin").each(function () {
+                $(this).click(function () {
+                    $selected = $(this);
+                    $(".pin").each(function () {
+                        $(this).removeClass("selected");
+                    });
+                    $(this).addClass("selected");
+                    //console.log($selected);
+                })});
+            
+            $("#remove-button").unbind("click");
+
+            $("#remove-button").bind("click", function () {
+                
+                if($selected!=null) {
+                var pin = pushpins[parseInt($selected.attr("id").replace("p", ""))];
+                map.entities.remove(pin);
+                infoboxes[parseInt($selected.attr("id").replace("p", ""))].setOptions({
+                            visible: false
+                        });
+                $selected.remove();
+                } 
+            });
+
+            $("#show-button").click(function () {
+                if($selected!=null) {
+                    for(i=0; i<infoboxes.length; i++) {
+                        infoboxes[i].setOptions({
+                            visible: false
+                        });
+                    }
+                    var box = infoboxes[parseInt($selected.attr("id").replace("p", ""))];
+                    box.setOptions({
+                            visible: true
+                        });
+            }});
+        });
+        }
+        
+
+    
+
+    </script>
+    <script type='text/javascript' src='http://www.bing.com/api/maps/mapcontrol?callback=GetMap' async defer></script>
+    <style>
+        #myMap {
+            margin-bottom: 30px;
+        }
+        .selected {
+            color: red;
+        }
+        ul {
+            list-style-type: none;
+        }
+        .pin {
+            transition: color 1s;
+            font-size: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="myMap" style="position:relative;width:600px;height:400px;"></div>
+    <button id="show-button">Pokaż</button>
+    <button id="remove-button">Usuń</button>
+	<ul id="pushpins-list">
+    </ul>
+
+</body>
+</html>
