@@ -63,7 +63,6 @@
             $("#remove-button").unbind("click");
 
             $("#remove-button").bind("click", function () {
-                
                 if($selected!=null) {
                 var pin = pushpins[parseInt($selected.attr("id").replace("p", ""))];
                 map.entities.remove(pin);
@@ -71,8 +70,10 @@
                             visible: false
                         });
                 $selected.remove();
-                } 
+                $selected = null; 
+                }
             });
+            $("#show-button").unbind("click");
 
             $("#show-button").click(function () {
                 if($selected!=null) {
