@@ -7,11 +7,13 @@
     function GetMap() {
         var map = new Microsoft.Maps.Map('#myMap', {
             credentials: 'Ar8OuXle5we71Wi0SX1Iwfw_BNitDyPH-P0-X55td977BSN9LoK709gyH3yzkOg7',
-            center: new Microsoft.Maps.Location(51.112810, 17.035418)
+            center: new Microsoft.Maps.Location(51.112810, 17.035418),
+			zoom: 12
         });
 
         var locs1 = Microsoft.Maps.TestDataGenerator.getLocations(3, map.getBounds());
         var locs2 = Microsoft.Maps.TestDataGenerator.getLocations(3, map.getBounds());
+		console.log(locs1, locs2);
         Microsoft.Maps.loadModule('Microsoft.Maps.Contour', function() {
 
             var line1 = new Microsoft.Maps.ContourLine(locs1, 50);
