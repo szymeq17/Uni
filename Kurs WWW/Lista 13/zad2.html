@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zadanie 2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <style>
+        .rect {
+            background-color: #888888;
+            padding: 10px;
+            min-height: 800px;
+            margin: 10px;
+        }
+        .my-card {
+            margin: 10px;
+        }
+        .my-title {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <img src="logo.png" alt="logo" style="width: 50px;">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Strona główna</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Odzież</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Obuwie</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Dodatki</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Koszyk</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Moje konto</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+
+      <div class="container">
+        <div class="row">
+        <div class="col-sm">
+            <div class="rect">
+                <h2 class="my-title">Aktualności</h2>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">-20% na t-shirty!</li>
+                    <li class="list-group-item">-40% na skarpetki!</li>
+                    <li class="list-group-item">-30% na koszule!</li>
+                    <li class="list-group-item">-10% na płaszcze!</li>
+                    <li class="list-group-item">-20% na rękawiczki!</li>
+                    </ul>
+            </div>
+        </div>
+
+          <div class="col-sm">
+            <div class="rect">
+                <h2 class="my-title">Polecamy</h2>
+                <div class="card my-card" style="width: 18rem;">
+                    <img src="koszula.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <p class="card-text">Koszula męska w kratę</p>
+                      <p class="card-text">79,79PLN</p>
+                    </div>
+                </div>
+                <div class="card my-card" style="width: 18rem;">
+                    <img src="koszula.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <p class="card-text">Koszula męska w kratę</p>
+                      <p class="card-text">79,79PLN</p>
+                    </div>
+                </div>
+            </div>
+          </div>
+          
+          <div class="col-sm">
+            <div class="rect">
+                <h2 class="my-title">Ostatnio przeglądane</h2>
+                <div class="card my-card" style="width: 18rem;">
+                    <img src="koszula.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <p class="card-text">Koszula męska w kratę</p>
+                      <p class="card-text">79,79PLN</p>
+                    </div>
+                </div>
+                <div class="card my-card" style="width: 18rem;">
+                    <img src="koszula.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <p class="card-text">Koszula męska w kratę</p>
+                      <p class="card-text">79,79PLN</p>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer bg-light">
+        <div class="container">
+            <div class="row">
+              <div class="col-sm">
+                50-321 Wrocław <br>
+                Ul. Trzebnicka 1 <br>
+                Nr tel.: 123 456 789
+              </div>
+              <div class="col-sm">
+                <img src="logo.png" alt="logo" style="height: 40px; margin: auto;">
+              </div>
+              <div class="col-sm">
+                Numer konta bankowego: <br>
+                12 1234 1234 1234 1234 1234
+
+              </div>
+            </div>
+          </div>
+      </footer>
+</body>
+</html>
