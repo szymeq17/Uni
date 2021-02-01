@@ -23,7 +23,7 @@ def romberg(k, func, a, b):
             column.append(T_i_j)
         T += [column]
     
-    return T[0][k]
+    return T[k][0]
 
 print(romberg(16, lambda x: 2021 * x**5 - 2020 * x**4 + 2019 * x**2, -1, 2))
 print("POPRAWNY WYNIK:")
